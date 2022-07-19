@@ -61,6 +61,7 @@ type Shell struct {
 	pagerArgs         []string
 	contextValues
 	Actions
+	noInputfunc func()
 }
 
 // New creates a new shell with default settings. Uses standard output and default prompt ">> ".
@@ -205,6 +206,7 @@ shell:
 
 			// normal flow
 			if len(line) == 0 {
+				s.handleNoInput()
 				// no input line
 				continue
 			}
@@ -717,4 +719,12 @@ func getPosition() (int, int, error) {
 	}
 
 	return col, row, nil
+}
+func (s *Shell) handleNoInput() {
+	if s.noInputfunc != nil {
+		s.noInputfunc()
+	}
+}
+func (s *Shell) AddNoInput(f func()) {
+	s.noInputfunc = f
 }
